@@ -24,7 +24,7 @@
             <div class="config-grid">
                 <div class="input-group">
                     <label for="serverHost">Server (domain or URL)</label>
-                    <input type="text" id="serverHost" placeholder="e.g: stats.anilsanwal.online or localhost:3336" value="stats.anilsanwal.online">
+                    <input type="text" id="serverHost" placeholder="e.g: stat.anilsanwal.online or localhost:3336" value="stat.anilsanwal.online">
                 </div>
                 <div class="button-group">
                     <button class="btn-connect" onclick="connectToServer()">Connect</button>
@@ -32,87 +32,87 @@
                     <button class="btn-diagnostic" onclick="openApiDiagnostic()" title="Check available API endpoints">🔧 API</button>
                 </div>
             </div>
-            <div id="statsus" class="statsus disconnected">
-                <span class="statsus-dot"></span>
-                <span id="statsusText">Disconnected</span>
+            <div id="status" class="status disconnected">
+                <span class="status-dot"></span>
+                <span id="statusText">Disconnected</span>
             </div>
         </div>
 
         <!-- Content Area -->
         <div id="mainContent" class="content">
 
-            <!-- Algorithm stats (moved below into the central area) -->
+            <!-- Algorithm stat (moved below into the central area) -->
 
             <!-- Charts -->
             <div class="charts-section">
-                <!-- Prime stats & Shares Grid -->
-                <!-- Replaced Performance Chart with Prime stats as requested -->
+                <!-- Prime stat & Shares Grid -->
+                <!-- Replaced Performance Chart with Prime stat as requested -->
                 <div class="charts-grid">
-                    <!-- Prime stats Container (Now containing Node stats) -->
-                    <div class="prime-stats-container">
+                    <!-- Prime stat Container (Now containing Node stat) -->
+                    <div class="prime-stat-container">
                         <div class="prime-header-section">
-                            <h3>NODE statsISTICS</h3>
+                            <h3>NODE statISTICS</h3>
                             <p>Real-time performance metrics</p>
                         </div>
                         <div class="prime-cards-grid">
                             <!-- Card 1: Node Name (Full Width) -->
-                            <div class="prime-stats-card">
+                            <div class="prime-stat-card">
                                 <span class="prime-label">NODE NAME</span>
                                 <div class="prime-value-lg" id="nodeName" style="font-size: 1.6rem;">-</div>
                                 
                             </div>
                             
                             <!-- Card 2: Connected Workers -->
-                            <div class="prime-stats-card">
+                            <div class="prime-stat-card">
                                 <span class="prime-label">CONNECTED WORKERS</span>
                                 <div class="prime-value-lg" id="workersConnected">-</div>
                             </div>
 
                             <!-- Card 3: Blocks Found -->
-                            <div class="prime-stats-card">
+                            <div class="prime-stat-card">
                                 <span class="prime-label">BLOCKS FOUND</span>
                                 <div class="prime-value-lg" id="blocksFound">-</div>
                                 
                             </div>
 
                             <!-- Card 4: Uptime -->
-                            <div class="prime-stats-card">
+                            <div class="prime-stat-card">
                                 <span class="prime-label">UPTIME</span>
                                 <div class="prime-value-lg" id="uptime" style="font-size: 1.0rem;">-</div>
                             </div>
 
                             <!-- Card 5: Valid Shares -->
-                            <div class="prime-stats-card">
+                            <div class="prime-stat-card">
                                 <span class="prime-label">VALID SHARES</span>
                                 <div class="prime-value-lg" id="sharesValid">-</div>
                             </div>
 
                             <!-- Card 6: Stale Shares (separate) -->
-                            <div class="prime-stats-card">
+                            <div class="prime-stat-card">
                                 <span class="prime-label">STALE SHARES</span>
                                 <div class="prime-value-lg" id="sharesStale">-</div>
                             </div>
 
                             <!-- Card 7: Invalid Shares (separate) -->
-                            <div class="prime-stats-card">
+                            <div class="prime-stat-card">
                                 <span class="prime-label">INVALID SHARES</span>
                                 <div class="prime-value-lg" id="sharesInvalid">-</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Algorithm stats (inserted into center column) -->
-                    <div class="algo-stats center-algo">
-                        <h2>Algorithm statsistics</h2>
+                    <!-- Algorithm stat (inserted into center column) -->
+                    <div class="algo-stat center-algo">
+                        <h2>Algorithm statistics</h2>
                         <div class="algo-grid">
                             <!-- SHA-256 -->
                             <div class="algo-card">
                                 <h3>SHA-256</h3>
-                                <div class="algo-stats">
+                                <div class="algo-stat">
                                     <label>Hashrate:</label>
                                     <value id="shaHashrate">-</value>
                                 </div>
-                                <div class="algo-stats">
+                                <div class="algo-stat">
                                     <label>Workers:</label>
                                     <value id="shaWorkers">-</value>
                                 </div>
@@ -121,11 +121,11 @@
                             <!-- Scrypt -->
                             <div class="algo-card">
                                 <h3>Scrypt</h3>
-                                <div class="algo-stats">
+                                <div class="algo-stat">
                                     <label>Hashrate:</label>
                                     <value id="scryptHashrate">-</value>
                                 </div>
-                                <div class="algo-stats">
+                                <div class="algo-stat">
                                     <label>Workers:</label>
                                     <value id="scryptWorkers">-</value>
                                 </div>
@@ -134,11 +134,11 @@
                             <!-- KawPoW -->
                             <div class="algo-card">
                                 <h3>KawPoW</h3>
-                                <div class="algo-stats">
+                                <div class="algo-stat">
                                     <label>Hashrate:</label>
                                     <value id="kawpowHashrate">-</value>
                                 </div>
-                                <div class="algo-stats">
+                                <div class="algo-stat">
                                     <label>Workers:</label>
                                     <value id="kawpowWorkers">-</value>
                                 </div>
@@ -242,19 +242,19 @@
 
 
 
-        <!-- Loading/Error statse -->
-        <div id="loadingstatse" class="loading-message">
+        <!-- Loading/Error state -->
+        <div id="loadingstate" class="loading-message">
             Waiting for connection...
         </div>
     </div>
 
 
     <!-- Modals (Moved out of .container) -->
-    <!-- Miner stats Modal -->
+    <!-- Miner stat Modal -->
         <div id="minerModal" class="miner-modal" style="display: none;">
             <div class="miner-modal-content">
                 <div class="miner-modal-header">
-                    <h2>📈 Miner statsistics</h2>
+                    <h2>📈 Miner statistics</h2>
                     <button class="modal-close-btn" onclick="closeMinerModal()">&times;</button>
                 </div>
                 <div class="miner-modal-body">
@@ -262,42 +262,42 @@
                         <label>Address:</label>
                         <code id="modalMinerAddress">-</code>
                     </div>
-                    <div class="miner-stats-grid">
-                        <div class="miner-stats-card">
+                    <div class="miner-stat-grid">
+                        <div class="miner-stat-card">
                             <h4>Hashrate</h4>
-                            <div class="miner-stats-value" id="modalMinerHashrate">-</div>
+                            <div class="miner-stat-value" id="modalMinerHashrate">-</div>
                         </div>
-                        <div class="miner-stats-card">
+                        <div class="miner-stat-card">
                             <h4>Workers</h4>
-                            <div class="miner-stats-value" id="modalMinerWorkers">-</div>
+                            <div class="miner-stat-value" id="modalMinerWorkers">-</div>
                         </div>
-                        <div class="miner-stats-card">
+                        <div class="miner-stat-card">
                             <h4>Valid Shares</h4>
-                            <div class="miner-stats-value" id="modalMinerValidShares">-</div>
+                            <div class="miner-stat-value" id="modalMinerValidShares">-</div>
                         </div>
-                        <div class="miner-stats-card">
+                        <div class="miner-stat-card">
                             <h4>Invalid Shares</h4>
-                            <div class="miner-stats-value" id="modalMinerInvalidShares">-</div>
+                            <div class="miner-stat-value" id="modalMinerInvalidShares">-</div>
                         </div>
-                        <div class="miner-stats-card">
+                        <div class="miner-stat-card">
                             <h4>Stale Shares</h4>
-                            <div class="miner-stats-value" id="modalMinerStaleShares">-</div>
+                            <div class="miner-stat-value" id="modalMinerStaleShares">-</div>
                         </div>
-                        <div class="miner-stats-card">
+                        <div class="miner-stat-card">
                             <h4>Blocks Found</h4>
-                            <div class="miner-stats-value" id="modalMinerBlocks">-</div>
+                            <div class="miner-stat-value" id="modalMinerBlocks">-</div>
                         </div>
-                        <div class="miner-stats-card">
+                        <div class="miner-stat-card">
                             <h4>Last Seen</h4>
-                            <div class="miner-stats-value" id="modalMinerLastSeen">-</div>
+                            <div class="miner-stat-value" id="modalMinerLastSeen">-</div>
                         </div>
-                        <div class="miner-stats-card">
+                        <div class="miner-stat-card">
                             <h4>First Seen</h4>
-                            <div class="miner-stats-value" id="modalMinerFirstSeen">-</div>
+                            <div class="miner-stat-value" id="modalMinerFirstSeen">-</div>
                         </div>
-                        <div class="miner-stats-card luck-card">
+                        <div class="miner-stat-card luck-card">
                             <h4>Current Luck</h4>
-                            <div class="miner-stats-value" id="modalMinerLuck">-</div>
+                            <div class="miner-stat-value" id="modalMinerLuck">-</div>
                         </div>
                     </div>
                     <div class="miner-workers-section">
@@ -367,7 +367,7 @@
             </div>
         </div>
 
-        <!-- WebSocket statsus Indicator -->
+        <!-- WebSocket status Indicator -->
         <div id="wsIndicator" class="ws-indicator" style="display: none;">
             <span class="ws-dot"></span>
             <span class="ws-text">Live</span>
@@ -377,6 +377,7 @@
     <script type="module" src="js/main.js"></script>
 </body>
 </html>
+
 
 
 
