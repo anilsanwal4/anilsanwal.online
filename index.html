@@ -24,7 +24,7 @@
             <div class="config-grid">
                 <div class="input-group">
                     <label for="serverHost">Server (domain or URL)</label>
-                    <input type="text" id="serverHost" placeholder="e.g: stats.anilsanwal.online or localhost:3336" value="stats.anilsanwal.online">
+                    <input type="text" id="serverHost" placeholder="e.g: stat.anilsanwal.online or localhost:3336" value="stat.anilsanwal.online">
                 </div>
                 <div class="button-group">
                     <button class="btn-connect" onclick="connectToServer()">Connect</button>
@@ -41,15 +41,15 @@
         <!-- Content Area -->
         <div id="mainContent" class="content">
 
-            <!-- Algorithm Stats (moved below into the central area) -->
+            <!-- Algorithm stat (moved below into the central area) -->
 
             <!-- Charts -->
             <div class="charts-section">
-                <!-- Prime Stats & Shares Grid -->
-                <!-- Replaced Performance Chart with Prime Stats as requested -->
+                <!-- Prime stat & Shares Grid -->
+                <!-- Replaced Performance Chart with Prime stat as requested -->
                 <div class="charts-grid">
-                    <!-- Prime Stats Container (Now containing Node Stats) -->
-                    <div class="prime-stats-container">
+                    <!-- Prime stat Container (Now containing Node stat) -->
+                    <div class="prime-stat-container">
                         <div class="prime-header-section">
                             <h3>NODE STATISTICS</h3>
                             <p>Real-time performance metrics</p>
@@ -101,8 +101,8 @@
                         </div>
                     </div>
 
-                    <!-- Algorithm Stats (inserted into center column) -->
-                    <div class="algo-stats center-algo">
+                    <!-- Algorithm stat (inserted into center column) -->
+                    <div class="algo-stat center-algo">
                         <h2>Algorithm Statistics</h2>
                         <div class="algo-grid">
                             <!-- SHA-256 -->
@@ -250,7 +250,7 @@
 
 
     <!-- Modals (Moved out of .container) -->
-    <!-- Miner Stats Modal -->
+    <!-- Miner stat Modal -->
         <div id="minerModal" class="miner-modal" style="display: none;">
             <div class="miner-modal-content">
                 <div class="miner-modal-header">
@@ -262,7 +262,7 @@
                         <label>Address:</label>
                         <code id="modalMinerAddress">-</code>
                     </div>
-                    <div class="miner-stats-grid">
+                    <div class="miner-stat-grid">
                         <div class="miner-stat-card">
                             <h4>Hashrate</h4>
                             <div class="miner-stat-value" id="modalMinerHashrate">-</div>
@@ -377,4 +377,5 @@
     <script type="module" src="js/main.js"></script>
 </body>
 </html>
+
 
