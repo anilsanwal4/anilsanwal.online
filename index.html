@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quai Mining Dashboard</title>
+
+  <script src="../vendor/chart.min.js"></script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="icon" href="../quai-logo.ico" type="image/x-icon">
+
+  <style>
+    .h2-link {
+      color: inherit;
+      text-decoration: none;
+      margin-left: 6px;
+    }
+
+    .h2-link:hover {
+      text-decoration: underline;
+      opacity: 0.85;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>⛏️ Quai Mining Dashboard</h1>
+    </header>
+
+    <!-- Configuration Panel -->
+    <div class="config-panel">
+      <h2>
+        ⚙️ 
+        <a href="https://partner.anthill.farm/links/miner?hash=608d8a69-ae57-4522-96fe-42693126cbf1" 
+           target="_blank" 
+           class="h2-link">
+           Server
+        </a>
+        <a href="https://partner.anthill.farm/links/minerv2?hash=a52b0e38-262a-4211-9ed0-5a3e7fdff662" 
+           target="_blank" 
+           class="h2-link">
+           Configuration
+        </a>
+      </h2>
+
+      <div class="config-grid">
+        <div class="input-group">
+          <label for="serverHost">Server (domain or URL)</label>
+          <input type="text" id="serverHost"
+                 placeholder="e.g: stat.anilsanwal.online or localhost:3336"
+                 value="stat.anilsanwal.online">
+        </div>
+
+        <div class="button-group">
+          <button class="btn-connect" onclick="connectToServer()">Connect</button>
+          <button class="btn-clear" onclick="clearConfig()">Clear</button>
+          <button class="btn-diagnostic" onclick="openApiDiagnostic()">🔧 API</button>
+        </div>
+      </div>
+
+      <div id="status" class="status disconnected">
+        <span class="status-dot"></span>
+        <span id="statusText">Disconnected</span>
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <div id="mainContent" class="content">
+
+      <!-- NODE STATISTICS -->
+      <div class="prime-stats-container">
+        <div class="prime-header-section">
+          <h3>NODE STATISTICS</h3>
+          <p>Real-time performance metrics</p>
+        </div>
+
+        <div class="prime-cards-grid">
+
+          <div class="prime-stat-card">
+            <span class="prime-label">NODE NAME</span>
+            <div class="prime-value-lg" id="nodeName">-</div>
+          </div>
+
+          <div class="prime-stat-card">
+            <span class="prime-label">CONNECTED WORKERS</span>
+            <div class="prime-value-lg" id="workersConnected">-</div>
+          </div>
+
+          <div class="prime-stat-card">
+            <span class="prime-label">BLOCKS FOUND</span>
+            <div class="prime-value-lg" id="blocksFound">-</div>
+          </div>
+
+          <div class="prime-stat-card">
+            <span class="prime-label">UPTIME</span>
+            <div class="prime-value-lg" id="uptime">-</div>
+          </div>
+
+          <!-- ✅ Restored Share Stats -->
+
+          <div class="prime-stat-card">
+            <span class="prime-label">VALID SHARES</span>
+            <div class="prime-value-lg" id="sharesValid">-</div>
+          </div>
+
+          <div class="prime-stat-card">
+            <span class="prime-label">STALE SHARES</span>
+            <div class="prime-value-lg" id="sharesStale">-</div>
+          </div>
+
+          <div class="prime-stat-card">
+            <span class="prime-label">INVALID SHARES</span>
+            <div class="prime-value-lg" id="sharesInvalid">-</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Algorithm Statistics -->
+      <div class="algo-stats">
+        <h2>Algorithm Statistics</h2>
+
+        <div class="algo-grid">
+
+          <div class="algo-card">
+            <h3>SHA-256</h3>
+            <div class="algo-stat">
+              <label>Hashrate:</label>
+              <value id="shaHashrate">-</value>
+            </div>
+            <div class="algo-stat">
+              <label>Workers:</label>
+              <value id="shaWorkers">-</value>
+            </div>
+          </div>
+
+          <div class="algo-card">
+            <h3>Scrypt</h3>
+            <div class="algo-stat">
+              <label>Hashrate:</label>
+              <value id="scryptHashrate">-</value>
+            </div>
+            <div class="algo-stat">
+              <label>Workers:</label>
+              <value id="scryptWorkers">-</value>
+            </div>
+          </div>
+
+          <div class="algo-card">
+            <h3>KawPoW</h3>
+            <div class="algo-stat">
+              <label>Hashrate:</label>
+              <value id="kawpowHashrate">-</value>
+            </div>
+            <div class="algo-stat">
+              <label>Workers:</label>
+              <value id="kawpowWorkers">-</value>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Loading/Error State -->
+    <div id="loadingState" class="loading-message">
+      Waiting for connection...
+    </div>
+  </div>
+
+  <script type="module" src="../js/main.js"></script>
+</body>
+</html>
+
