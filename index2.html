@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>A&N Global Enterprises Mining Control Room</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Orbitron', sans-serif;
+    background: #05070d;
+    color: #00ffaa;
+    overflow: hidden;
+}
+
+.header {
+    height: 60px;
+    background: #000c14;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 25px;
+    border-bottom: 1px solid #00ffaa44;
+}
+
+.metrics {
+    font-size: 14px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+button.fullscreen-btn {
+    background: #00151f;
+    color: #00ffaa;
+    border: 1px solid #00ffaa44;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+}
+
+button.fullscreen-btn:hover {
+    background: #003d4d;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 12px;
+    padding: 10px 15px;
+    height: calc(100vh - 130px); /* adjusted for ticker */
+}
+
+.card {
+    background: #0b111b;
+    border: 1px solid #00ffaa33;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: 0.3s;
+}
+
+.card.offline {
+    border: 2px solid red;
+    box-shadow: 0 0 15px red;
+}
+
+.card-title {
+    background: #000c14;
+    padding: 5px 10px;
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: red;
+}
+
+iframe {
+    flex-grow: 1;
+    border: none;
+    background: #fff;
+}
+
+/* Ticker container fixed at bottom */
+.ticker-container {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: #000c14;
+    border-top: 1px solid #00ffaa44;
+    z-index: 5;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <div>🏢 A&N GLOBAL ENTERPRISES MINING CONTROL CENTRE</div>
+
+    <div class="header-right">
+        <div class="metrics">
+            BTC: <span id="btc">--</span> |
+            ETH: <span id="eth">--</span>
+        </div>
+
+        <button class="fullscreen-btn" onclick="toggleFullscreen()">
+            ⛶ Fullscreen
+        </button>
+    </div>
+</div>
+
+<div class="grid" id="dashboardGrid"></div>
+
+<!-- TradingView Ticker Tape Widget BEGIN -->
+<div class="ticker-container">
+  <div class="tradingview-widget-container">
+    <div class="tradingview-widget-container__widget"></div>
+    <script type="text/javascript"
+      src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js"
+      async>
+      {
+        "symbols": [
+          { "proName": "BINANCE:BTCUSDT", "title": "BTC/USDT" },
+          { "proName": "BINANCE:ETHUSDT", "title": "ETH/USDT" },
+          { "proName": "BINANCE:LTCUSDT", "title": "LTC/USDT" },
+          { "proName": "BINANCE:DOGEUSDT", "title": "DOGE/USDT" },
+          { "proName": "BINANCE:BNBUSDT", "title": "BNB/USDT" },
+          { "proName": "BINANCE:XRPUSDT", "title": "XRP/USDT" },
+          { "proName": "BINANCE:SOLUSDT", "title": "SOL/USDT" },
+          { "proName": "BINANCE:ADAUSDT", "title": "ADA/USDT" },
+          { "proName": "BINANCE:TRXUSDT", "title": "TRX/USDT" },
+          { "proName": "BINANCE:SHIBUSDT", "title": "SHIB/USDT" },
+          { "proName": "BINANCE:AVAXUSDT", "title": "AVAX/USDT" },
+          { "proName": "BINANCE:DOTUSDT", "title": "DOT/USDT" }
+        ],
+        "showSymbolLogo": true,
+        "colorTheme": "dark",
+        "isTransparent": false,
+        "displayMode": "adaptive",
+        "locale": "en"
+      }
+    </script>
+  </div>
+</div>
+<!-- TradingView Ticker Tape Widget END -->
+
+<audio id="alarmSound">
+  <source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg">
+</audio>
+
+<script>
+
+const nodes = [
+    { name: "Anil 001", url: "https://a1.naveendahiya.online/dashboard" },
+    { name: "Anil 002", url: "https://a2.anilsanwal.online/dashboard" },
+    { name: "Anil 003", url: "https://a3.anilsanwal.online/dashboard" },
+    { name: "Anil 004", url: "https://a4.anilsanwal.online/dashboard" },
+    { name: "Anil 005", url: "https://a5.anilsanwal.online/dashboard" },
+
+    { name: "Naveen 001", url: "https://n1.naveendahiya.online/dashboard" },
+    { name: "Naveen 002", url: "https://n2.naveendahiya.online/dashboard" },
+    { name: "Naveen 003", url: "https://n3.naveendahiya.online/dashboard" },
+    { name: "Naveen 004", url: "https://n4.naveendahiya.online/dashboard" },
+    { name: "Naveen 005", url: "https://n5.naveendahiya.online/dashboard" },
+
+    { name: "Surya 001", url: "https://s1.naveendahiya.online/dashboard" },
+    { name: "Surya 002", url: "https://s2.naveendahiya.online/dashboard" }
+];
+
+function buildGrid() {
+    const grid = document.getElementById("dashboardGrid");
+    grid.innerHTML = "";
+
+    nodes.forEach((node, index) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+            <div class="card-title">
+                ${node.name}
+                <div class="status-dot"></div>
+            </div>
+            <iframe src="${node.url}"></iframe>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+    } else {
+        document.exitFullscreen();
+    }
+}
+
+async function loadPrices() {
+    try {
+        let res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd");
+        let data = await res.json();
+        document.getElementById("btc").innerText = "$" + data.bitcoin.usd;
+        document.getElementById("eth").innerText = "$" + data.ethereum.usd;
+    } catch {}
+}
+
+setInterval(loadPrices, 30000);
+
+buildGrid();
+loadPrices();
+
+</script>
+
+</body>
+</html>
