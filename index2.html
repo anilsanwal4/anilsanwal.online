@@ -26,10 +26,6 @@ body {
     border-bottom: 1px solid #00ffaa44;
 }
 
-.metrics {
-    font-size: 14px;
-}
-
 .header-right {
     display: flex;
     align-items: center;
@@ -42,11 +38,6 @@ button.fullscreen-btn {
     border: 1px solid #00ffaa44;
     padding: 6px 12px;
     cursor: pointer;
-    font-family: 'Orbitron', sans-serif;
-}
-
-button.fullscreen-btn:hover {
-    background: #003d4d;
 }
 
 .grid {
@@ -55,7 +46,7 @@ button.fullscreen-btn:hover {
     grid-template-rows: repeat(3, 1fr);
     gap: 12px;
     padding: 10px 15px;
-    height: calc(100vh - 130px); /* adjusted for ticker */
+    height: calc(100vh - 130px);
 }
 
 .card {
@@ -65,12 +56,7 @@ button.fullscreen-btn:hover {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    transition: 0.3s;
-}
-
-.card.offline {
-    border: 2px solid red;
-    box-shadow: 0 0 15px red;
+    position: relative;
 }
 
 .card-title {
@@ -79,13 +65,12 @@ button.fullscreen-btn:hover {
     font-size: 12px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
-.status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: red;
+.card-controls span {
+    cursor: pointer;
+    margin-left: 8px;
 }
 
 iframe {
@@ -94,7 +79,30 @@ iframe {
     background: #fff;
 }
 
-/* Ticker container fixed at bottom */
+/* Maximize Overlay */
+.maximized {
+    position: fixed !important;
+    top: 60px;
+    left: 0;
+    width: 100vw;
+    height: calc(100vh - 110px);
+    z-index: 1000;
+    border: 2px solid #00ffaa;
+}
+
+.overlay-close {
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    background: #00151f;
+    color: #00ffaa;
+    border: 1px solid #00ffaa44;
+    padding: 6px 10px;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+/* Ticker */
 .ticker-container {
     position: fixed;
     bottom: 0;
@@ -109,22 +117,14 @@ iframe {
 
 <div class="header">
     <div>🏢 A&N GLOBAL ENTERPRISES MINING CONTROL CENTRE</div>
-
     <div class="header-right">
-        <div class="metrics">
-            BTC: <span id="btc">--</span> |
-            ETH: <span id="eth">--</span>
-        </div>
-
-        <button class="fullscreen-btn" onclick="toggleFullscreen()">
-            ⛶ Fullscreen
-        </button>
+        <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
     </div>
 </div>
 
 <div class="grid" id="dashboardGrid"></div>
 
-<!-- TradingView Ticker Tape Widget BEGIN -->
+<!-- TradingView Ticker -->
 <div class="ticker-container">
   <div class="tradingview-widget-container">
     <div class="tradingview-widget-container__widget"></div>
@@ -133,18 +133,18 @@ iframe {
       async>
       {
         "symbols": [
-          { "proName": "BINANCE:BTCUSDT", "title": "BTC/USDT" },
-          { "proName": "BINANCE:ETHUSDT", "title": "ETH/USDT" },
-          { "proName": "BINANCE:LTCUSDT", "title": "LTC/USDT" },
-          { "proName": "BINANCE:DOGEUSDT", "title": "DOGE/USDT" },
-          { "proName": "BINANCE:BNBUSDT", "title": "BNB/USDT" },
-          { "proName": "BINANCE:XRPUSDT", "title": "XRP/USDT" },
-          { "proName": "BINANCE:SOLUSDT", "title": "SOL/USDT" },
-          { "proName": "BINANCE:ADAUSDT", "title": "ADA/USDT" },
-          { "proName": "BINANCE:TRXUSDT", "title": "TRX/USDT" },
-          { "proName": "BINANCE:SHIBUSDT", "title": "SHIB/USDT" },
-          { "proName": "BINANCE:AVAXUSDT", "title": "AVAX/USDT" },
-          { "proName": "BINANCE:DOTUSDT", "title": "DOT/USDT" }
+          {"proName":"BINANCE:BTCUSDT","title":"BTC/USDT"},
+          {"proName":"BINANCE:ETHUSDT","title":"ETH/USDT"},
+          {"proName":"BINANCE:LTCUSDT","title":"LTC/USDT"},
+          {"proName":"BINANCE:DOGEUSDT","title":"DOGE/USDT"},
+          {"proName":"BINANCE:BNBUSDT","title":"BNB/USDT"},
+          {"proName":"BINANCE:XRPUSDT","title":"XRP/USDT"},
+          {"proName":"BINANCE:SOLUSDT","title":"SOL/USDT"},
+          {"proName":"BINANCE:ADAUSDT","title":"ADA/USDT"},
+          {"proName":"BINANCE:TRXUSDT","title":"TRX/USDT"},
+          {"proName":"BINANCE:SHIBUSDT","title":"SHIB/USDT"},
+          {"proName":"BINANCE:AVAXUSDT","title":"AVAX/USDT"},
+          {"proName":"BINANCE:DOTUSDT","title":"DOT/USDT"}
         ],
         "showSymbolLogo": true,
         "colorTheme": "dark",
@@ -155,11 +155,6 @@ iframe {
     </script>
   </div>
 </div>
-<!-- TradingView Ticker Tape Widget END -->
-
-<audio id="alarmSound">
-  <source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg">
-</audio>
 
 <script>
 
@@ -169,16 +164,16 @@ const nodes = [
     { name: "Anil 003", url: "https://a3.anilsanwal.online/dashboard" },
     { name: "Anil 004", url: "https://a4.anilsanwal.online/dashboard" },
     { name: "Anil 005", url: "https://a5.anilsanwal.online/dashboard" },
-
     { name: "Naveen 001", url: "https://n1.naveendahiya.online/dashboard" },
     { name: "Naveen 002", url: "https://n2.naveendahiya.online/dashboard" },
     { name: "Naveen 003", url: "https://n3.naveendahiya.online/dashboard" },
     { name: "Naveen 004", url: "https://n4.naveendahiya.online/dashboard" },
     { name: "Naveen 005", url: "https://n5.naveendahiya.online/dashboard" },
-
     { name: "Surya 001", url: "https://s1.naveendahiya.online/dashboard" },
     { name: "Surya 002", url: "https://s2.naveendahiya.online/dashboard" }
 ];
+
+let currentMaximized = null;
 
 function buildGrid() {
     const grid = document.getElementById("dashboardGrid");
@@ -187,15 +182,58 @@ function buildGrid() {
     nodes.forEach((node, index) => {
         const card = document.createElement("div");
         card.className = "card";
+        card.id = "card" + index;
+
         card.innerHTML = `
             <div class="card-title">
                 ${node.name}
-                <div class="status-dot"></div>
+                <div class="card-controls">
+                    <span onclick="maximizeCard(${index})">⛶</span>
+                    <span onclick="openPopup('${node.url}')">🔗</span>
+                </div>
             </div>
             <iframe src="${node.url}"></iframe>
         `;
+
         grid.appendChild(card);
     });
+}
+
+function maximizeCard(index) {
+    const card = document.getElementById("card" + index);
+
+    if (currentMaximized) {
+        currentMaximized.classList.remove("maximized");
+        removeCloseButton();
+        currentMaximized = null;
+        return;
+    }
+
+    card.classList.add("maximized");
+    currentMaximized = card;
+    addCloseButton();
+}
+
+function addCloseButton() {
+    const btn = document.createElement("button");
+    btn.className = "overlay-close";
+    btn.innerText = "✕ Close";
+    btn.onclick = () => {
+        currentMaximized.classList.remove("maximized");
+        currentMaximized = null;
+        removeCloseButton();
+    };
+    btn.id = "closeOverlay";
+    document.body.appendChild(btn);
+}
+
+function removeCloseButton() {
+    const btn = document.getElementById("closeOverlay");
+    if (btn) btn.remove();
+}
+
+function openPopup(url) {
+    window.open(url, "_blank");
 }
 
 function toggleFullscreen() {
@@ -206,19 +244,7 @@ function toggleFullscreen() {
     }
 }
 
-async function loadPrices() {
-    try {
-        let res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd");
-        let data = await res.json();
-        document.getElementById("btc").innerText = "$" + data.bitcoin.usd;
-        document.getElementById("eth").innerText = "$" + data.ethereum.usd;
-    } catch {}
-}
-
-setInterval(loadPrices, 30000);
-
 buildGrid();
-loadPrices();
 
 </script>
 
