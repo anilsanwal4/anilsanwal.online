@@ -1,163 +1,614 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <title>Anil's Mining Control Centre</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
-body {
-    margin: 0;
-    font-family: 'Orbitron', sans-serif;
-    background: #05070d;
-    color: #00ffaa;
-    overflow: hidden;
-}
+  /* ===== RESET & BASE ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-.header {
-    height: 60px;
-    background: #000c14;
+  /* ══════════════════════════════════════════
+     DARK THEME  (default)
+  ══════════════════════════════════════════ */
+  :root,
+  [data-theme="dark"] {
+    --accent:          #00ffaa;
+    --accent-dim:      #00ffaa55;
+    --accent-glow:     #00ffaa22;
+    --bg-deep:         #03060e;
+    --bg-mid:          #070d1a;
+    --bg-card:         #0a1020;
+    --bg-header:       #050b16;
+    --bg-card-title:   rgba(0,12,20,.9);
+    --bg-card-title2:  rgba(5,15,30,.9);
+    --bg-card-grad1:   #0c1525;
+    --bg-card-grad2:   #08101e;
+    --border:          #00ffaa28;
+    --border-hot:      #00ffaa88;
+    --text-dim:        #00cc8888;
+    --text-main:       #00ffaa;
+    --text-sub:        #00cc8888;
+    --card-corner:     rgba(0,255,170,.08);
+    --card-before:     rgba(0,255,170,.04);
+    --scrollbar-track: #03060e;
+    --scrollbar-thumb: #00ffaa55;
+    --header-glow:     rgba(0,255,170,.07);
+    --header-grad1:    #050b16;
+    --header-grad2:    #060f1e;
+    --overlay-bg1:     rgba(0,20,30,.95);
+    --overlay-bg2:     rgba(0,12,20,.95);
+    --loader-bg:       #0a1020;
+    --grid-line:       rgba(0,255,170,.03);
+
+    /* toggle pill colours */
+    --toggle-track-dark:  #0a1020;
+    --toggle-thumb-dark:  #00ffaa;
+
+    --red:    #ff4466;
+    --header-h: 64px;
+    --ticker-h: 46px;
+
+    /* transition speed for theme switch */
+    --theme-transition: .35s;
+  }
+
+  /* ══════════════════════════════════════════
+     LIGHT THEME
+  ══════════════════════════════════════════ */
+  [data-theme="light"] {
+    --accent:          #007755;
+    --accent-dim:      #00775588;
+    --accent-glow:     #00775522;
+    --bg-deep:         #eef4f0;
+    --bg-mid:          #e4ede8;
+    --bg-card:         #f5faf7;
+    --bg-header:       #d8efe4;
+    --bg-card-title:   rgba(220,240,230,.95);
+    --bg-card-title2:  rgba(210,235,225,.95);
+    --bg-card-grad1:   #e8f5ee;
+    --bg-card-grad2:   #ddf0e8;
+    --border:          #00775530;
+    --border-hot:      #00775588;
+    --text-dim:        #338866bb;
+    --text-main:       #005c3f;
+    --text-sub:        #338866aa;
+    --card-corner:     rgba(0,119,85,.07);
+    --card-before:     rgba(0,119,85,.04);
+    --scrollbar-track: #eef4f0;
+    --scrollbar-thumb: #00775555;
+    --header-glow:     rgba(0,119,85,.08);
+    --header-grad1:    #d0ebe0;
+    --header-grad2:    #c8e5d8;
+    --overlay-bg1:     rgba(200,235,220,.97);
+    --overlay-bg2:     rgba(210,238,228,.97);
+    --loader-bg:       #f0faf5;
+    --grid-line:       rgba(0,100,70,.04);
+  }
+
+  /* ── Global transition for smooth theme switch ── */
+  html { transition:
+    background var(--theme-transition) ease,
+    color    var(--theme-transition) ease;
+  }
+  body,
+  .header, .card, .card-title, .node-count,
+  .btn, .ctrl-btn, .live-badge, .ticker-container,
+  .iframe-loader, .overlay-close, .logo-icon {
+    transition:
+      background    var(--theme-transition) ease,
+      background-color var(--theme-transition) ease,
+      border-color  var(--theme-transition) ease,
+      color         var(--theme-transition) ease,
+      box-shadow    var(--theme-transition) ease !important;
+  }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Orbitron', sans-serif;
+    background: var(--bg-deep);
+    color: var(--text-main);
+  }
+
+  /* ===== ANIMATED BG GRID ===== */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+    animation: gridPan 60s linear infinite;
+    transition: background-image var(--theme-transition) ease;
+  }
+  @keyframes gridPan {
+    from { background-position: 0 0; }
+    to   { background-position: 40px 40px; }
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 10%, var(--accent-glow) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(0,170,255,.03) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+    transition: background var(--theme-transition) ease;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    position: relative;
+    z-index: 100;
+    height: var(--header-h);
+    background: linear-gradient(90deg, var(--header-grad1) 0%, var(--header-grad2) 50%, var(--header-grad1) 100%);
+    border-bottom: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 25px;
-    border-bottom: 1px solid #00ffaa44;
-}
+    padding: 0 28px;
+    box-shadow: 0 4px 30px var(--header-glow);
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -2px; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-dim), transparent);
+  }
 
-.header-right {
+  .header-left {
     display: flex;
     align-items: center;
-    gap: 15px;
-}
+    gap: 14px;
+  }
 
-button.fullscreen-btn {
-    background: #00151f;
-    color: #00ffaa;
-    border: 1px solid #00ffaa44;
-    padding: 6px 12px;
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent-glow), var(--accent-dim));
+    border: 1px solid var(--accent-dim);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 0 12px var(--accent-glow);
+    position: relative;
+  }
+  .logo-icon::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), transparent);
+    opacity: .12;
+  }
+
+  .header-title { display: flex; flex-direction: column; line-height: 1; }
+  .header-title .main {
+    font-size: 15px; font-weight: 700;
+    letter-spacing: 3px; text-transform: uppercase;
+    color: var(--text-main);
+    text-shadow: 0 0 16px var(--accent-glow);
+  }
+  .header-title .sub {
+    font-size: 9px; letter-spacing: 5px;
+    color: var(--text-sub); margin-top: 3px;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .live-badge {
+    display: flex; align-items: center; gap: 7px;
+    background: var(--accent-glow);
+    border: 1px solid var(--border);
+    border-radius: 20px; padding: 4px 12px;
+    font-size: 9px; letter-spacing: 2px;
+    color: var(--text-dim);
+  }
+  .live-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: .4; transform: scale(.7); }
+  }
+
+  .header-right { display: flex; align-items: center; gap: 12px; }
+
+  .node-count {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; color: var(--text-dim); letter-spacing: 1px;
+    background: var(--accent-glow);
+    border: 1px solid var(--border);
+    border-radius: 6px; padding: 5px 10px;
+  }
+  .node-count span { color: var(--accent); font-weight: 700; }
+
+  .btn {
+    background: linear-gradient(135deg, var(--accent-glow), transparent);
+    color: var(--text-main);
+    border: 1px solid var(--border);
+    border-radius: 8px; padding: 7px 16px;
     cursor: pointer;
-}
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px; letter-spacing: 1.5px;
+    white-space: nowrap;
+    display: flex; align-items: center; gap: 6px;
+    transition: all .25s ease !important;
+  }
+  .btn:hover {
+    background: var(--accent-dim);
+    border-color: var(--accent-dim);
+    box-shadow: 0 0 16px var(--accent-glow), inset 0 0 10px var(--accent-glow);
+    transform: translateY(-1px);
+  }
+  .btn:active { transform: translateY(0); }
 
-.grid {
+  /* ══════════════════════════════════════════
+     THEME TOGGLE SWITCH
+  ══════════════════════════════════════════ */
+  .theme-toggle-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .theme-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    user-select: none;
+    min-width: 32px;
+    text-align: center;
+    transition: color var(--theme-transition) ease;
+  }
+
+  /* The pill track */
+  .toggle-switch {
+    position: relative;
+    width: 52px;
+    height: 26px;
+    cursor: pointer;
+  }
+  .toggle-switch input {
+    opacity: 0; width: 0; height: 0; position: absolute;
+  }
+  .toggle-track {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    transition:
+      background var(--theme-transition) ease,
+      border-color var(--theme-transition) ease,
+      box-shadow var(--theme-transition) ease;
+    box-shadow: inset 0 0 8px rgba(0,0,0,.3);
+  }
+  .toggle-switch input:checked + .toggle-track {
+    background: #e8f5ee;
+    border-color: #00775544;
+    box-shadow: inset 0 0 8px rgba(0,119,85,.1);
+  }
+
+  /* The sliding thumb */
+  .toggle-thumb {
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    transition:
+      transform var(--theme-transition) cubic-bezier(.34,1.56,.64,1),
+      background var(--theme-transition) ease,
+      box-shadow  var(--theme-transition) ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    line-height: 1;
+  }
+  .toggle-switch input:checked + .toggle-track .toggle-thumb {
+    transform: translateX(26px);
+    background: #007755;
+    box-shadow: 0 0 8px #00775588;
+  }
+
+  /* icon inside thumb */
+  .thumb-icon { pointer-events: none; }
+
+  /* glow ring on focus */
+  .toggle-switch:focus-within .toggle-track {
+    box-shadow: 0 0 0 2px var(--accent-dim), inset 0 0 8px rgba(0,0,0,.3);
+  }
+
+  /* ===== GRID ===== */
+  .grid-wrapper {
+    position: relative; z-index: 1;
+    padding: 12px 16px;
+    height: calc(100vh - var(--header-h) - var(--ticker-h));
+  }
+  .grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    gap: 12px;
-    padding: 10px 15px;
-    height: calc(100vh - 130px);
-}
+    gap: 10px; height: 100%;
+  }
 
-.card {
-    background: #0b111b;
-    border: 1px solid #00ffaa33;
-    border-radius: 10px;
+  /* ===== CARD ===== */
+  .card {
+    background: linear-gradient(160deg, var(--bg-card-grad1) 0%, var(--bg-card-grad2) 100%);
+    border: 1px solid var(--border);
+    border-radius: 12px;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    display: flex; flex-direction: column;
     position: relative;
-}
+    transition: border-color .3s, box-shadow .3s, transform .2s,
+                background var(--theme-transition) ease !important;
+  }
+  .card::before {
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--card-before) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+  .card:hover {
+    border-color: var(--accent-dim);
+    box-shadow: 0 0 20px var(--accent-glow), 0 4px 30px rgba(0,0,0,.25);
+    transform: translateY(-1px);
+  }
+  .card::after {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--card-corner), transparent);
+    border-radius: 12px 0 0 0;
+    pointer-events: none; z-index: 0;
+  }
 
-.card-title {
-    background: #000c14;
-    padding: 5px 10px;
-    font-size: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+  /* ===== CARD TITLE BAR ===== */
+  .card-title {
+    position: relative; z-index: 2;
+    background: linear-gradient(90deg, var(--bg-card-title) 0%, var(--bg-card-title2) 100%);
+    padding: 6px 10px 6px 12px;
+    font-size: 10px; letter-spacing: 1.5px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(4px);
+  }
+  .card-name { display: flex; align-items: center; gap: 8px; }
+  .status-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 6px var(--accent);
+    animation: pulse 2s ease-in-out infinite; flex-shrink: 0;
+  }
+  .node-label {
+    color: var(--text-main); font-weight: 600;
+    text-shadow: 0 0 8px var(--accent-glow);
+  }
+  .node-id {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px; color: var(--text-dim); letter-spacing: 1px;
+    background: var(--accent-glow);
+    padding: 1px 5px; border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+  .card-controls { display: flex; align-items: center; gap: 4px; }
+  .ctrl-btn {
+    width: 24px; height: 24px;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    background: var(--accent-glow);
+    color: var(--text-dim);
+    cursor: pointer; font-size: 11px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s !important;
+  }
+  .ctrl-btn:hover {
+    background: var(--accent-dim);
+    border-color: var(--accent-dim);
+    color: var(--text-main);
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
 
-.card-controls span {
-    cursor: pointer;
-    margin-left: 8px;
-}
+  /* ===== IFRAME / LOADER ===== */
+  .iframe-wrapper {
+    flex: 1; position: relative; z-index: 1; overflow: hidden;
+  }
+  .iframe-loader {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 10px;
+    background: var(--loader-bg);
+    z-index: 2; transition: opacity .4s;
+  }
+  .iframe-loader.hidden { opacity: 0; pointer-events: none; }
+  .loader-ring {
+    width: 32px; height: 32px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loader-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px; letter-spacing: 2px; color: var(--text-dim);
+    animation: blink 1.5s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+  iframe { width: 100%; height: 100%; border: none; background: #fff; display: block; }
 
-iframe {
-    flex-grow: 1;
-    border: none;
-    background: #fff;
-}
-
-/* Maximize Overlay */
-.maximized {
+  /* ===== MAXIMIZED ===== */
+  .maximized {
     position: fixed !important;
-    top: 60px;
-    left: 0;
+    top: var(--header-h); left: 0;
     width: 100vw;
-    height: calc(100vh - 110px);
-    z-index: 1000;
-    border: 2px solid #00ffaa;
-}
-
-.overlay-close {
+    height: calc(100vh - var(--header-h) - var(--ticker-h));
+    z-index: 500;
+    border-radius: 0 !important;
+    border: none !important;
+    border-top: 2px solid var(--accent) !important;
+    box-shadow: 0 0 40px var(--accent-dim) !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .overlay-close {
     position: fixed;
-    top: 70px;
-    right: 20px;
-    background: #00151f;
-    color: #00ffaa;
-    border: 1px solid #00ffaa44;
-    padding: 6px 10px;
-    cursor: pointer;
-    z-index: 1001;
-}
+    top: calc(var(--header-h) + 12px);
+    right: 18px; z-index: 501;
+    background: linear-gradient(135deg, var(--overlay-bg1), var(--overlay-bg2));
+    color: var(--text-main);
+    border: 1px solid var(--accent-dim);
+    border-radius: 8px; padding: 7px 16px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px; letter-spacing: 1.5px;
+    cursor: pointer; backdrop-filter: blur(8px);
+    box-shadow: 0 0 16px var(--accent-glow);
+    transition: all .2s; display: flex; align-items: center; gap: 6px;
+  }
+  .overlay-close:hover { background: var(--accent-dim); box-shadow: 0 0 24px var(--accent-dim); }
 
-/* Ticker */
-.ticker-container {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background: #000c14;
-    border-top: 1px solid #00ffaa44;
-    z-index: 5;
-}
+  /* ===== TICKER ===== */
+  .ticker-container {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    height: var(--ticker-h); z-index: 100;
+    background: var(--bg-header);
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -4px 20px rgba(0,0,0,.3);
+  }
+  .ticker-container::before {
+    content: '';
+    position: absolute; top: -1px; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-dim), transparent);
+  }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+  ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 2px; }
+
 </style>
 </head>
 <body>
 
-<div class="header">
-    <div>🏢 ANIL's MINING CONTROL CENTRE</div>
-    <div class="header-right">
-        <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+<!-- ===== HEADER ===== -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo-icon">⛏</div>
+    <div class="header-title">
+      <div class="main">Anil's Mining Control Centre</div>
+      <div class="sub">DISTRIBUTED NODE MONITORING SYSTEM</div>
     </div>
+    <div class="live-badge">
+      <div class="live-dot"></div>
+      LIVE
+    </div>
+  </div>
+
+  <div class="header-right">
+    <div class="node-count">NODES: <span id="nodeCountDisplay">0</span> ONLINE</div>
+
+    <!-- ── THEME TOGGLE ── -->
+    <div class="theme-toggle-wrap" title="Toggle light / dark mode">
+      <span class="theme-label" id="themeLabel">DARK</span>
+      <label class="toggle-switch" aria-label="Toggle theme">
+        <input type="checkbox" id="themeCheckbox" onchange="toggleTheme(this)">
+        <div class="toggle-track">
+          <div class="toggle-thumb">
+            <span class="thumb-icon" id="thumbIcon">🌙</span>
+          </div>
+        </div>
+      </label>
+    </div>
+
+    <button class="btn" onclick="toggleFullscreen()">⛶ FULLSCREEN</button>
+  </div>
+</header>
+
+<!-- ===== GRID ===== -->
+<div class="grid-wrapper">
+  <div class="grid" id="dashboardGrid"></div>
 </div>
 
-<div class="grid" id="dashboardGrid"></div>
-
-<!-- TradingView Ticker -->
+<!-- ===== TICKER ===== -->
 <div class="ticker-container">
-  <div class="tradingview-widget-container">
-    <div class="tradingview-widget-container__widget"></div>
+  <div class="tradingview-widget-container" style="height:100%">
+    <div class="tradingview-widget-container__widget" style="height:100%"></div>
     <script type="text/javascript"
-      src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js"
-      async>
-      {
-        "symbols": [
-          {"proName":"BINANCE:BTCUSDT","title":"BTC/USDT"},
-          {"proName":"BINANCE:ETHUSDT","title":"ETH/USDT"},
-          {"proName":"BINANCE:LTCUSDT","title":"LTC/USDT"},
-          {"proName":"BINANCE:DOGEUSDT","title":"DOGE/USDT"},
-          {"proName":"BINANCE:BNBUSDT","title":"BNB/USDT"},
-          {"proName":"BINANCE:XRPUSDT","title":"XRP/USDT"},
-          {"proName":"BINANCE:SOLUSDT","title":"SOL/USDT"},
-          {"proName":"BINANCE:ADAUSDT","title":"ADA/USDT"},
-          {"proName":"BINANCE:TRXUSDT","title":"TRX/USDT"},
-          {"proName":"BINANCE:SHIBUSDT","title":"SHIB/USDT"},
-          {"proName":"BINANCE:AVAXUSDT","title":"AVAX/USDT"},
-          {"proName":"BINANCE:DOTUSDT","title":"DOT/USDT"}
-        ],
-        "showSymbolLogo": true,
-        "colorTheme": "dark",
-        "isTransparent": false,
-        "displayMode": "adaptive",
-        "locale": "en"
-      }
-    </script>
+  src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js"
+  async>
+{
+  "symbols": [
+    {"proName":"BINANCE:BTCUSDT","title":"BTC/USDT"},
+    {"proName":"BINANCE:ETHUSDT","title":"ETH/USDT"},
+    {"proName":"BINANCE:LTCUSDT","title":"LTC/USDT"},
+    {"proName":"BINANCE:DOGEUSDT","title":"DOGE/USDT"},
+    {"proName":"BINANCE:BNBUSDT","title":"BNB/USDT"},
+    {"proName":"BINANCE:XRPUSDT","title":"XRP/USDT"},
+    {"proName":"BINANCE:SOLUSDT","title":"SOL/USDT"},
+    {"proName":"BINANCE:ADAUSDT","title":"ADA/USDT"},
+    {"proName":"BINANCE:TRXUSDT","title":"TRX/USDT"},
+    {"proName":"BINANCE:SHIBUSDT","title":"SHIB/USDT"},
+    {"proName":"BINANCE:AVAXUSDT","title":"AVAX/USDT"},
+    {"proName":"BINANCE:DOTUSDT","title":"DOT/USDT"}
+  ],
+  "showSymbolLogo": true,
+  "colorTheme": "dark",
+  "isTransparent": false,
+  "displayMode": "adaptive",
+  "locale": "en"
+}
+</script>
   </div>
 </div>
 
 <script>
 
+/* ══════════════════════════════════════════
+   THEME TOGGLE
+══════════════════════════════════════════ */
+const html       = document.documentElement;
+const checkbox   = document.getElementById('themeCheckbox');
+const themeLabel = document.getElementById('themeLabel');
+const thumbIcon  = document.getElementById('thumbIcon');
+
+function applyTheme(mode) {
+  html.setAttribute('data-theme', mode);
+  const isLight = mode === 'light';
+  checkbox.checked    = isLight;
+  themeLabel.textContent = isLight ? 'LIGHT' : 'DARK';
+  thumbIcon.textContent  = isLight ? '☀️'    : '🌙';
+  localStorage.setItem('mcc-theme', mode);
+}
+
+function toggleTheme(cb) {
+  applyTheme(cb.checked ? 'light' : 'dark');
+}
+
+/* Restore saved preference on load */
+(function initTheme() {
+  const saved = localStorage.getItem('mcc-theme') || 'dark';
+  applyTheme(saved);
+})();
+
+/* ══════════════════════════════════════════
+   NODE DATA
+══════════════════════════════════════════ */
 const nodes = [
     { name: "Anil 001", url: "https://a1.naveendahiya.online/dashboard" },
     { name: "Anil 002", url: "http://192.168.0.105/dashboard" },
@@ -175,78 +626,120 @@ const nodes = [
 
 let currentMaximized = null;
 
+/* ── Build grid ──────────────────────────────────────────────── */
 function buildGrid() {
-    const grid = document.getElementById("dashboardGrid");
-    grid.innerHTML = "";
+  const grid = document.getElementById("dashboardGrid");
+  grid.innerHTML = "";
 
-    nodes.forEach((node, index) => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.id = "card" + index;
+  nodes.forEach((node, index) => {
+    const parts      = node.name.split(" ");
+    const ownerLabel = parts[0].toUpperCase();
+    const nodeId     = parts[1] || "";
 
-        card.innerHTML = `
-            <div class="card-title">
-                ${node.name}
-                <div class="card-controls">
-                    <span onclick="maximizeCard(${index})">⛶</span>
-                    <span onclick="openPopup('${node.url}')">🔗</span>
-                </div>
-            </div>
-            <iframe src="${node.url}"></iframe>
-        `;
+    const card = document.createElement("div");
+    card.className = "card";
+    card.id = "card" + index;
 
-        grid.appendChild(card);
-    });
+    card.innerHTML = `
+      <div class="card-title">
+        <div class="card-name">
+          <div class="status-dot"></div>
+          <span class="node-label">${ownerLabel}</span>
+          <span class="node-id">${nodeId}</span>
+        </div>
+        <div class="card-controls">
+          <button class="ctrl-btn" title="Maximize" onclick="maximizeCard(${index})">⛶</button>
+          <button class="ctrl-btn" title="Open in new tab" onclick="openPopup('${node.url}')">↗</button>
+        </div>
+      </div>
+      <div class="iframe-wrapper">
+        <div class="iframe-loader" id="loader${index}">
+          <div class="loader-ring"></div>
+          <div class="loader-text">CONNECTING…</div>
+        </div>
+        <iframe
+          src="${node.url}"
+          loading="lazy"
+          onload="hideLoader(${index})"
+          onerror="showError(${index})"
+        ></iframe>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+
+  document.getElementById("nodeCountDisplay").textContent = nodes.length;
 }
 
+/* ── Loader helpers ──────────────────────────────────────────── */
+function hideLoader(index) {
+  const loader = document.getElementById("loader" + index);
+  if (loader) loader.classList.add("hidden");
+}
+function showError(index) {
+  const loader = document.getElementById("loader" + index);
+  if (loader) {
+    loader.querySelector(".loader-ring").style.borderTopColor = "#ff4466";
+    loader.querySelector(".loader-text").textContent = "CONNECTION ERROR";
+    loader.querySelector(".loader-text").style.color  = "#ff4466";
+  }
+}
+
+/* ── Maximize ────────────────────────────────────────────────── */
 function maximizeCard(index) {
-    const card = document.getElementById("card" + index);
+  const card = document.getElementById("card" + index);
 
-    if (currentMaximized) {
-        currentMaximized.classList.remove("maximized");
-        removeCloseButton();
-        currentMaximized = null;
-        return;
-    }
+  if (currentMaximized) {
+    currentMaximized.classList.remove("maximized");
+    removeCloseButton();
+    currentMaximized = null;
+    if (currentMaximized === card) return;
+  }
 
-    card.classList.add("maximized");
-    currentMaximized = card;
-    addCloseButton();
+  card.classList.add("maximized");
+  currentMaximized = card;
+  addCloseButton(nodes[index].name);
 }
 
-function addCloseButton() {
-    const btn = document.createElement("button");
-    btn.className = "overlay-close";
-    btn.innerText = "✕ Close";
-    btn.onclick = () => {
-        currentMaximized.classList.remove("maximized");
-        currentMaximized = null;
-        removeCloseButton();
-    };
-    btn.id = "closeOverlay";
-    document.body.appendChild(btn);
+function addCloseButton(nodeName) {
+  const btn     = document.createElement("button");
+  btn.className = "overlay-close";
+  btn.id        = "closeOverlay";
+  btn.innerHTML = `✕ &nbsp;CLOSE <span style="opacity:.5;font-size:9px;margin-left:6px">${nodeName.toUpperCase()}</span>`;
+  btn.onclick = () => {
+    currentMaximized.classList.remove("maximized");
+    currentMaximized = null;
+    removeCloseButton();
+  };
+  document.body.appendChild(btn);
 }
-
 function removeCloseButton() {
-    const btn = document.getElementById("closeOverlay");
-    if (btn) btn.remove();
+  const btn = document.getElementById("closeOverlay");
+  if (btn) btn.remove();
 }
 
-function openPopup(url) {
-    window.open(url, "_blank");
-}
-
+/* ── Popup / Fullscreen ──────────────────────────────────────── */
+function openPopup(url) { window.open(url, "_blank"); }
 function toggleFullscreen() {
-    if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-    } else {
-        document.exitFullscreen();
-    }
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  } else {
+    document.exitFullscreen();
+  }
 }
+
+/* ── ESC to close maximized ──────────────────────────────────── */
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && currentMaximized) {
+    currentMaximized.classList.remove("maximized");
+    currentMaximized = null;
+    removeCloseButton();
+  }
+});
 
 buildGrid();
 
 </script>
-
 </body>
 </html>
