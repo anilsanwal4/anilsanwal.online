@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Anil's Mining Control Centre</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Orbitron', sans-serif;
+    background: #05070d;
+    color: #00ffaa;
+    overflow: hidden;
+}
+
+.header {
+    height: 60px;
+    background: #000c14;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 25px;
+    border-bottom: 1px solid #00ffaa44;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+button.fullscreen-btn {
+    background: #00151f;
+    color: #00ffaa;
+    border: 1px solid #00ffaa44;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 12px;
+    padding: 10px 15px;
+    height: calc(100vh - 130px);
+}
+
+.card {
+    background: #0b111b;
+    border: 1px solid #00ffaa33;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.card-title {
+    background: #000c14;
+    padding: 5px 10px;
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-controls span {
+    cursor: pointer;
+    margin-left: 8px;
+}
+
+iframe {
+    flex-grow: 1;
+    border: none;
+    background: #fff;
+}
+
+/* Maximize Overlay */
+.maximized {
+    position: fixed !important;
+    top: 60px;
+    left: 0;
+    width: 100vw;
+    height: calc(100vh - 110px);
+    z-index: 1000;
+    border: 2px solid #00ffaa;
+}
+
+.overlay-close {
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    background: #00151f;
+    color: #00ffaa;
+    border: 1px solid #00ffaa44;
+    padding: 6px 10px;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+/* Ticker */
+.ticker-container {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: #000c14;
+    border-top: 1px solid #00ffaa44;
+    z-index: 5;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <div>🏢 ANIL's MINING CONTROL CENTRE</div>
+    <div class="header-right">
+        <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+    </div>
+</div>
+
+<div class="grid" id="dashboardGrid"></div>
+
+<!-- TradingView Ticker -->
+<div class="ticker-container">
+  <div class="tradingview-widget-container">
+    <div class="tradingview-widget-container__widget"></div>
+    <script type="text/javascript"
+      src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js"
+      async>
+      {
+        "symbols": [
+          {"proName":"BINANCE:BTCUSDT","title":"BTC/USDT"},
+          {"proName":"BINANCE:ETHUSDT","title":"ETH/USDT"},
+          {"proName":"BINANCE:LTCUSDT","title":"LTC/USDT"},
+          {"proName":"BINANCE:DOGEUSDT","title":"DOGE/USDT"},
+          {"proName":"BINANCE:BNBUSDT","title":"BNB/USDT"},
+          {"proName":"BINANCE:XRPUSDT","title":"XRP/USDT"},
+          {"proName":"BINANCE:SOLUSDT","title":"SOL/USDT"},
+          {"proName":"BINANCE:ADAUSDT","title":"ADA/USDT"},
+          {"proName":"BINANCE:TRXUSDT","title":"TRX/USDT"},
+          {"proName":"BINANCE:SHIBUSDT","title":"SHIB/USDT"},
+          {"proName":"BINANCE:AVAXUSDT","title":"AVAX/USDT"},
+          {"proName":"BINANCE:DOTUSDT","title":"DOT/USDT"}
+        ],
+        "showSymbolLogo": true,
+        "colorTheme": "dark",
+        "isTransparent": false,
+        "displayMode": "adaptive",
+        "locale": "en"
+      }
+    </script>
+  </div>
+</div>
+
+<script>
+
+const nodes = [
+    { name: "Anil 001", url: "https://a1.naveendahiya.online/dashboard" },
+    { name: "Anil 002", url: "http://192.168.0.105/dashboard" },
+    { name: "Anil 003", url: "http://192.168.0.103/dashboard" },
+    { name: "Anil 004", url: "http://192.168.0.127/dashboard" },
+    { name: "Anil 005", url: "http://192.168.0.128/dashboard" },
+    { name: "Anil 006", url: "http://192.168.0.129/dashboard" },
+    { name: "Naveen 001", url: "https://n1.naveendahiya.online/dashboard" },
+    { name: "Naveen 002", url: "https://n2.naveendahiya.online/dashboard" },
+    { name: "Naveen 003", url: "https://n3.naveendahiya.online/dashboard" },
+    { name: "Naveen 004", url: "https://n4.naveendahiya.online/dashboard" },
+    { name: "Naveen 005", url: "https://a1.naveendahiya.online/dashboard" },
+    { name: "Manish 001", url: "https://m1.anilsanwal.online/dashboard" },
+    ];
+
+let currentMaximized = null;
+
+function buildGrid() {
+    const grid = document.getElementById("dashboardGrid");
+    grid.innerHTML = "";
+
+    nodes.forEach((node, index) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.id = "card" + index;
+
+        card.innerHTML = `
+            <div class="card-title">
+                ${node.name}
+                <div class="card-controls">
+                    <span onclick="maximizeCard(${index})">⛶</span>
+                    <span onclick="openPopup('${node.url}')">🔗</span>
+                </div>
+            </div>
+            <iframe src="${node.url}"></iframe>
+        `;
+
+        grid.appendChild(card);
+    });
+}
+
+function maximizeCard(index) {
+    const card = document.getElementById("card" + index);
+
+    if (currentMaximized) {
+        currentMaximized.classList.remove("maximized");
+        removeCloseButton();
+        currentMaximized = null;
+        return;
+    }
+
+    card.classList.add("maximized");
+    currentMaximized = card;
+    addCloseButton();
+}
+
+function addCloseButton() {
+    const btn = document.createElement("button");
+    btn.className = "overlay-close";
+    btn.innerText = "✕ Close";
+    btn.onclick = () => {
+        currentMaximized.classList.remove("maximized");
+        currentMaximized = null;
+        removeCloseButton();
+    };
+    btn.id = "closeOverlay";
+    document.body.appendChild(btn);
+}
+
+function removeCloseButton() {
+    const btn = document.getElementById("closeOverlay");
+    if (btn) btn.remove();
+}
+
+function openPopup(url) {
+    window.open(url, "_blank");
+}
+
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+    } else {
+        document.exitFullscreen();
+    }
+}
+
+buildGrid();
+
+</script>
+
+</body>
+</html>
